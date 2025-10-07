@@ -1,0 +1,15 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(){
+    char gram[20],part1[20],part2[20],modgram[20],newgram[20];
+    int i , j , k , l=0,pos;
+    printf("production:A->");
+    scanf("%s",gram)
+
+    for(i=0;gram[i]!="|";i++,j++){
+        part1[j]=gram[i]
+    part1[j]='\0';}
+    for (j=++i;gram[j]!='\0';i++,j++){}
+    
+}

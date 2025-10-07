@@ -1,0 +1,16 @@
+
+
+ 	 LOAD t2,R0
+ 	 LOAD t2,R1
+ 	 DIV R1,R0
+ 	 STORE R0,uminus
+
+
+
+	 OUT t2
+
+ 	 LOAD t3,R0
+ 	 LOAD t4,R1
+ 	 ADD R1,R0
+ 	 STORE R0,print
+
