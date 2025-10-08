@@ -1,93 +1,39 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
-int i = 0, j = 0;
-char expr[100], left[10], right[10];
-char temp = 'Z'; // Temporary variable names start from Z
-
-struct op_pos {
-    int pos;
-    char op;
-} ops[20];
-
-void find_operators();
-void generate_code();
-void get_left(int pos);
-void get_right(int pos);
-void reverse_string(char *s); // replacement for strrev
-
 int main() {
-    printf("\n\tINTERMEDIATE CODE GENERATION\n");
-    printf("--------------------------------------\n");
-    printf("Enter the expression: ");
-    scanf("%s", expr);
+    char exp[50];
+    int temp = 1; // use integer for temp counter
 
-    printf("\nIntermediate code:\n");
-    find_operators();
-    generate_code();
+    printf("Enter an expression (like a=b+c*d): ");
+    scanf("%s", exp);
+
+    printf("\nIntermediate Code:\n");
+
+    // Process * and / first (higher precedence)
+    for (int i = 0; exp[i] != '\0'; i++) {
+        if (exp[i] == '*' || exp[i] == '/') {
+            printf("t%d = %c %c %c\n", temp, exp[i - 1], exp[i], exp[i + 1]);
+            exp[i - 1] = 'A' + temp - 1; // placeholder (A, B, C...) for t1, t2
+            memmove(&exp[i], &exp[i + 2], strlen(exp) - i - 1);
+            temp++;
+            i = -1;
+        }
+    }
+
+    // Process + and - next
+    for (int i = 0; exp[i] != '\0'; i++) {
+        if (exp[i] == '+' || exp[i] == '-') {
+            printf("t%d = %c %c %c\n", temp, exp[i - 1], exp[i], exp[i + 1]);
+            exp[i - 1] = 'A' + temp - 1;
+            memmove(&exp[i], &exp[i + 2], strlen(exp) - i - 1);
+            temp++;
+            i = -1;
+        }
+    }
+
+    // Final assignment
+    printf("%c = t%d\n", exp[0], temp - 1);
 
     return 0;
-}
-
-void find_operators() {
-    int len = strlen(expr);
-    for (i = 0; i < len; i++)
-        if (expr[i] == '=')
-            ops[j].pos = i, ops[j++].op = '=';
-
-    for (i = 0; i < len; i++)
-        if (expr[i] == '/' || expr[i] == '*')
-            ops[j].pos = i, ops[j++].op = expr[i];
-
-    for (i = 0; i < len; i++)
-        if (expr[i] == '+' || expr[i] == '-')
-            ops[j].pos = i, ops[j++].op = expr[i];
-}
-
-void generate_code() {
-    for (i = 0; ops[i].op != '\0'; i++) {
-        get_left(ops[i].pos);
-        get_right(ops[i].pos);
-
-        printf("%c := %s %c %s\n", temp, left, ops[i].op, right);
-        expr[ops[i].pos] = temp;  // Replace operator with temp variable
-        temp--;                   // Next temporary variable
-    }
-
-    printf("%s := %c\n", expr, ++temp); // Final assignment
-}
-
-void get_left(int pos) {
-    int k = pos - 1;
-    int p = 0;
-    while (k >= 0 && expr[k] != '+' && expr[k] != '-' && expr[k] != '*' &&
-           expr[k] != '/' && expr[k] != '=' && expr[k] != '\0') {
-        left[p++] = expr[k];
-        expr[k] = '$';
-        break;
-    }
-    left[p] = '\0';
-    reverse_string(left); // fixed version of strrev
-}
-
-void get_right(int pos) {
-    int k = pos + 1;
-    int p = 0;
-    while (expr[k] != '\0' && expr[k] != '+' && expr[k] != '-' &&
-           expr[k] != '*' && expr[k] != '/' && expr[k] != '=' ) {
-        right[p++] = expr[k];
-        expr[k] = '$';
-        break;
-    }
-    right[p] = '\0';
-}
-
-void reverse_string(char *s) {
-    int len = strlen(s);
-    for (int i = 0; i < len / 2; i++) {
-        char temp = s[i];
-        s[i] = s[len - i - 1];
-        s[len - i - 1] = temp;
-    }
 }
